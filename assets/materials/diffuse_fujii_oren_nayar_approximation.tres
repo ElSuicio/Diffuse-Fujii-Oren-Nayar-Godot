@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://j2l1sb3vhce"]
+
+[ext_resource type="Shader" uid="uid://y2ctawinqqhd" path="res://addons/diffuse_fujii_oren_nayar/materials/shaders/DiffuseFujiiOrenNayarApproximation.tres" id="1_ummw6"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ummw6")
+shader_parameter/AlbedoColor = Color(1, 1, 1, 1)
+shader_parameter/rho = 0.9
+shader_parameter/sigma = 30.0
