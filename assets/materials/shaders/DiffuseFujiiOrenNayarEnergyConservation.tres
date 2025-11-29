@@ -1,0 +1,178 @@
+[gd_resource type="VisualShader" load_steps=14 format=3 uid="uid://crm4u1dy0dsox"]
+
+[ext_resource type="Script" uid="uid://dx72fslv3ee21" path="res://addons/diffuse_fujii_oren_nayar/DiffuseFujiiOrenNayarEnergyConservation.gd" id="1_qksic"]
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_kc6v3"]
+expanded_output_ports = [0]
+parameter_name = "AlbedoColor"
+default_value_enabled = true
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_qksic"]
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_17h55"]
+parameter_name = "Roughness"
+hint = 2
+step = 0.01
+default_value_enabled = true
+default_value = 1.0
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_qksic"]
+default_input_values = [0, null, 1, null, 2, null, 3, null, 4, null, 5, 1.0, 6, 1.0]
+initialized = true
+script = ExtResource("1_qksic")
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_pe1gw"]
+input_name = "diffuse"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_yjv8t"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_yrmh7"]
+input_name = "normal"
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_yqhj5"]
+input_name = "light"
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_tw70o"]
+input_name = "view"
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_f4nb3"]
+input_name = "light_color"
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_u0etf"]
+input_name = "attenuation"
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_i8uod"]
+parameter_name = "rho"
+hint = 2
+step = 0.01
+default_value_enabled = true
+default_value = 1.0
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, depth_test_default, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform vec4 AlbedoColor : source_color = vec4(1.000000, 1.000000, 1.000000, 1.000000);
+uniform float rho : hint_range(0.0, 1.0, 0.00999999977648) = 1.0;
+uniform float Roughness : hint_range(0.0, 1.0, 0.00999999977648) = 1.0;
+
+
+
+void fragment() {
+// ColorParameter:2
+	vec4 n_out2p0 = AlbedoColor;
+	float n_out2p1 = n_out2p0.r;
+	float n_out2p2 = n_out2p0.g;
+	float n_out2p3 = n_out2p0.b;
+
+
+// VectorCompose:3
+	vec3 n_out3p0 = vec3(n_out2p1, n_out2p2, n_out2p3);
+
+
+// Output:0
+	ALBEDO = n_out3p0;
+
+
+}
+
+void light() {
+// Input:2
+	vec3 n_out2p0 = DIFFUSE_LIGHT;
+
+
+// Input:4
+	vec3 n_out4p0 = NORMAL;
+
+
+// Input:5
+	vec3 n_out5p0 = LIGHT;
+
+
+// Input:6
+	vec3 n_out6p0 = VIEW;
+
+
+// Input:7
+	vec3 n_out7p0 = LIGHT_COLOR;
+
+
+// Input:8
+	float n_out8p0 = ATTENUATION;
+
+
+// FloatParameter:9
+	float n_out9p0 = rho;
+
+
+// FloatParameter:10
+	float n_out10p0 = Roughness;
+
+
+	vec3 n_out11p0;
+// FujiiOrenNayarEnergyConservation:11
+	{
+		
+			vec3 n = normalize( n_out4p0 );
+			vec3 l = normalize( n_out5p0 );
+			vec3 v = normalize( n_out6p0 );
+			
+			float cNdotL = max(dot(n, l), 0.0);
+			float cNdotV = max(dot(n, v), 0.0);
+			
+			// https://mimosa-pudica.net/improved-oren-nayar.html
+			
+			float t = dot(l, v) - cNdotL * cNdotV;
+			
+			if(t > 0.0)
+			{
+				t /= max(cNdotL, cNdotV);
+			}
+			
+			float A = 1.0 / (1.0 + ((PI / 2.0) - (2.0 / 3.0)) * n_out10p0);
+			float B = n_out10p0 * A;
+			
+			float diffuse_fujii_oren_nayar = (n_out9p0 / PI) * cNdotL * max(min(A + B * t, 1.0), 0.0);
+			
+			n_out11p0 = n_out7p0 * n_out8p0 * diffuse_fujii_oren_nayar;
+			
+			
+	}
+
+
+// VectorOp:3
+	vec3 n_out3p0 = n_out2p0 + n_out11p0;
+
+
+// Output:0
+	DIFFUSE_LIGHT = n_out3p0;
+
+
+}
+"
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorParameter_kc6v3")
+nodes/fragment/2/position = Vector2(-40, 120)
+nodes/fragment/3/node = SubResource("VisualShaderNodeVectorCompose_qksic")
+nodes/fragment/3/position = Vector2(220, 120)
+nodes/fragment/connections = PackedInt32Array(2, 1, 3, 0, 2, 2, 3, 1, 2, 3, 3, 2, 3, 0, 0, 0)
+nodes/light/2/node = SubResource("VisualShaderNodeInput_pe1gw")
+nodes/light/2/position = Vector2(-20, 100)
+nodes/light/3/node = SubResource("VisualShaderNodeVectorOp_yjv8t")
+nodes/light/3/position = Vector2(220, 100)
+nodes/light/4/node = SubResource("VisualShaderNodeInput_yrmh7")
+nodes/light/4/position = Vector2(-320, -80)
+nodes/light/5/node = SubResource("VisualShaderNodeInput_yqhj5")
+nodes/light/5/position = Vector2(-320, 0)
+nodes/light/6/node = SubResource("VisualShaderNodeInput_tw70o")
+nodes/light/6/position = Vector2(-320, 80)
+nodes/light/7/node = SubResource("VisualShaderNodeInput_f4nb3")
+nodes/light/7/position = Vector2(-320, 160)
+nodes/light/8/node = SubResource("VisualShaderNodeInput_u0etf")
+nodes/light/8/position = Vector2(-320, 240)
+nodes/light/9/node = SubResource("VisualShaderNodeFloatParameter_i8uod")
+nodes/light/9/position = Vector2(-320, 320)
+nodes/light/10/node = SubResource("VisualShaderNodeFloatParameter_17h55")
+nodes/light/10/position = Vector2(-320, 580)
+nodes/light/11/node = SubResource("VisualShaderNodeCustom_qksic")
+nodes/light/11/position = Vector2(-20, 180)
+nodes/light/connections = PackedInt32Array(2, 0, 3, 0, 3, 0, 0, 0, 4, 0, 11, 0, 5, 0, 11, 1, 6, 0, 11, 2, 7, 0, 11, 3, 8, 0, 11, 4, 9, 0, 11, 5, 10, 0, 11, 6, 11, 0, 3, 1)
