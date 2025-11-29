@@ -1,5 +1,18 @@
 # Diffuse Fujii-Oren-Nayar - Godot
-This is an addon for Godot 4.4+ that adds the `Fujii-Oren-Nayar-Approximation` node to the visual shader system. This node outputs the `Diffuse Light` based on [Yasuhiro Fujii approximation](https://mimosa-pudica.net/improved-oren-nayar.html) to the `Full-Oren–Nayar Reflectance Model`.
+<div align="justify">
+This is an addon for Godot 4.4+ that adds the `Fujii-Oren-Nayar-Approximation` and `Fujii-Oren-Nayar-Energy-Conservation` nodes to the visual shader system. 
+
+<br>
+
+<br>
+
+<br>
+
+`Fujii-Oren-Nayar-Approximation` node outputs the `Diffuse Light` based on [Yasuhiro Fujii](https://mimosa-pudica.net/improved-oren-nayar.html) approximation to the `Full-Oren–Nayar Reflectance Model`.
+
+</div>
+
+<br>
 
 <br>
 
@@ -24,6 +37,42 @@ This is an addon for Godot 4.4+ that adds the `Fujii-Oren-Nayar-Approximation` n
 <br>
 
 <div align="center"> Fujii approximation to Full Oren-Nayar Diffuse Reflectance Model (Render). </div>
+
+<br>
+
+<br>
+
+<div align="justify">
+
+`Fujii-Oren-Nayar-Energy-Conservation` node outputs the `Diffuse Light` based on [Yasuhiro Fujii](https://mimosa-pudica.net/improved-oren-nayar.html) implementation of the `Oren–Nayar Reflectance Model` with `Energy Conservation`.
+
+</div>
+
+<br>
+
+<br>
+
+<div align="center">
+  
+<img src = "https://raw.githubusercontent.com/ElSuicio/Diffuse-Fujii-Oren-Nayar-Godot/refs/heads/main/FujiiOrenNayarEnergyConservationNode.png" alt = "FujiiOrenNayarEnergyConservationNode.">
+
+</div>
+
+<br>
+
+<div align="center"> Fujii-Oren-Nayar Diffuse Reflectance Model with Energy Conservation (Node). </div>
+
+<br>
+
+<div align="center">
+
+<img src = "https://raw.githubusercontent.com/ElSuicio/Diffuse-Fujii-Oren-Nayar-Godot/refs/heads/main/render/1920x1080/FujiiOrenNayarEnergyConservation.png" alt = "FujiiOrenNayarEnergyConservationNodeRender.">
+
+</div>
+
+<br>
+
+<div align="center"> Fujii-Oren-Nayar Diffuse Reflectance Model with Energy Conservation (Render). </div>
 
 # Links & Support
 - [itch.io](https://interdreamsoft.itch.io/)
