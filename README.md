@@ -7,8 +7,6 @@ This is an addon for Godot 4.4+ that adds the `Fujii-Oren-Nayar-Approximation` a
 
 <br>
 
-<br>
-
 `Fujii-Oren-Nayar-Approximation` node outputs the `Diffuse Light` based on [Yasuhiro Fujii](https://mimosa-pudica.net/improved-oren-nayar.html) approximation to the `Full-Oren–Nayar Reflectance Model`.
 
 </div>
@@ -45,7 +43,7 @@ This is an addon for Godot 4.4+ that adds the `Fujii-Oren-Nayar-Approximation` a
 
 <div align="justify">
 
-`Fujii-Oren-Nayar-Energy-Conservation` node outputs the `Diffuse Light` based on [Yasuhiro Fujii](https://mimosa-pudica.net/improved-oren-nayar.html) implementation of the `Oren–Nayar Reflectance Model` with `Energy Conservation`.
+`Fujii-Oren-Nayar-Energy-Conservation` node outputs the `Diffuse Light` based on [Yasuhiro Fujii](https://mimosa-pudica.net/improved-oren-nayar.html) implementation of the `Qualitative-Oren–Nayar Reflectance Model` with `Energy Conservation`.
 
 </div>
 
@@ -79,7 +77,7 @@ This is an addon for Godot 4.4+ that adds the `Fujii-Oren-Nayar-Approximation` a
 - [itch.io](https://interdreamsoft.itch.io/)
 - [x.com](https://x.com/ElSuicio)
 
-If you liked it and want to support it, you can donate via [PayPal](https://www.paypal.com/donate/?hosted_button_id=NRD94T2N7XZ6J) or [ItchIo](https://interdreamsoft.itch.io/fujii-oren-nayar-approximation-light-model) . Your support is very much appreciated and helps me keep going!
+If you liked it and want to support it, you can donate via [PayPal](https://www.paypal.com/donate/?hosted_button_id=NRD94T2N7XZ6J) or on the following ItchIo pages: [Fujii-Oren-Nayar-Approximation](https://interdreamsoft.itch.io/fujii-oren-nayar-approximation-light-model) or [Fujii-Oren-Nayar-Energy-Conservation](https://interdreamsoft.itch.io/fujii-oren-nayar-energy-conservation-light-model) . Your support is very much appreciated and helps me keep going!
 
 
 [ Contact Email: interdreamsoft@gmail.com ]
