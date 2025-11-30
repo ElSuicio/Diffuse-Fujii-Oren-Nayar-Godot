@@ -121,13 +121,12 @@ func _get_code(input_vars : Array[String], output_vars : Array[String], _mode : 
 		t /= max(cNdotL, cNdotV);
 	}
 	
-	float A = 1.0 / (1.0 + ((PI / 2.0) - (2.0 / 3.0)) * {roughness});
+	float A = 1.0 / (PI + {roughness} * ((PI / 2.0) - (2.0 / 3.0)));
 	float B = {roughness} * A;
 	
-	float diffuse_fujii_oren_nayar = ({rho} / PI) * cNdotL * max(min(A + B * t, 1.0), 0.0);
+	float diffuse_fujii_oren_nayar = {rho} * max(min(A + (B / PI) * t, 1.0), 0.0) * cNdotL;
 	
 	{output} = {light_color} * {attenuation} * diffuse_fujii_oren_nayar;
-	
 	"""
 	
 	return shader.format({

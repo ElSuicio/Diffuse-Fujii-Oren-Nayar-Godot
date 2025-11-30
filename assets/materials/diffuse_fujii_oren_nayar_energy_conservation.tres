@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bxermjeeueuw2"]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://qhnk2w2tow6x"]
 
-[ext_resource type="Shader" uid="uid://crm4u1dy0dsox" path="res://addons/diffuse_fujii_oren_nayar/materials/shaders/DiffuseFujiiOrenNayarEnergyConservation.tres" id="1_uf7xl"]
+[ext_resource type="Shader" uid="uid://del50llud37ap" path="res://addons/diffuse_fujii_oren_nayar/materials/shaders/DiffuseFujiiOrenNayarEnergyConservation.tres" id="1_uf7xl"]
 
 [resource]
 render_priority = 0

@@ -1,4 +1,4 @@
-[gd_resource type="VisualShader" load_steps=14 format=3 uid="uid://crm4u1dy0dsox"]
+[gd_resource type="VisualShader" load_steps=14 format=3 uid="uid://del50llud37ap"]
 
 [ext_resource type="Script" uid="uid://dx72fslv3ee21" path="res://addons/diffuse_fujii_oren_nayar/DiffuseFujiiOrenNayarEnergyConservation.gd" id="1_qksic"]
 
@@ -129,13 +129,12 @@ void light() {
 				t /= max(cNdotL, cNdotV);
 			}
 			
-			float A = 1.0 / (1.0 + ((PI / 2.0) - (2.0 / 3.0)) * n_out10p0);
+			float A = 1.0 / (PI + n_out10p0 * ((PI / 2.0) - (2.0 / 3.0)));
 			float B = n_out10p0 * A;
 			
-			float diffuse_fujii_oren_nayar = (n_out9p0 / PI) * cNdotL * max(min(A + B * t, 1.0), 0.0);
+			float diffuse_fujii_oren_nayar = n_out9p0 * max(min(A + (B / PI) * t, 1.0), 0.0) * cNdotL;
 			
 			n_out11p0 = n_out7p0 * n_out8p0 * diffuse_fujii_oren_nayar;
-			
 			
 	}
 
@@ -175,4 +174,4 @@ nodes/light/10/node = SubResource("VisualShaderNodeFloatParameter_17h55")
 nodes/light/10/position = Vector2(-320, 580)
 nodes/light/11/node = SubResource("VisualShaderNodeCustom_qksic")
 nodes/light/11/position = Vector2(-20, 180)
-nodes/light/connections = PackedInt32Array(2, 0, 3, 0, 3, 0, 0, 0, 4, 0, 11, 0, 5, 0, 11, 1, 6, 0, 11, 2, 7, 0, 11, 3, 8, 0, 11, 4, 9, 0, 11, 5, 10, 0, 11, 6, 11, 0, 3, 1)
+nodes/light/connections = PackedInt32Array(2, 0, 3, 0, 4, 0, 11, 0, 5, 0, 11, 1, 6, 0, 11, 2, 7, 0, 11, 3, 8, 0, 11, 4, 9, 0, 11, 5, 10, 0, 11, 6, 3, 0, 0, 0, 11, 0, 3, 1)
