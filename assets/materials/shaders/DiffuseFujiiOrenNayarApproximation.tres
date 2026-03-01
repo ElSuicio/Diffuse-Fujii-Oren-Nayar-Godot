@@ -134,7 +134,7 @@ void light() {
 				t /= max(cNdotL, cNdotV);
 			}
 			
-			float A = INV_PI * (1.0 - 0.5 * (sigma2 / (sigma2 + 0.33)) + 0.17 * rho * (sigma2 / (sigma2 + 0.13)));
+			float A = INV_PI * (1.0 - 0.5 * (sigma2 / (sigma2 + 0.33)) + 0.17 * n_out10p0 * (sigma2 / (sigma2 + 0.13)));
 			float B = INV_PI * (0.45 * (sigma2 / (sigma2 + 0.09)));
 			
 			float diffuse_fujii_oren_nayar = n_out10p0 * cNdotL * max(min((A + B * t), 1.0), 0.0);
