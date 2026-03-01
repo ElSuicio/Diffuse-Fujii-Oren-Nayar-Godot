@@ -125,7 +125,7 @@ func _get_code(input_vars : Array[String], output_vars : Array[String], _mode : 
 		t /= max(cNdotL, cNdotV);
 	}
 	
-	float A = INV_PI * (1.0 - 0.5 * (sigma2 / (sigma2 + 0.33)) + 0.17 * rho * (sigma2 / (sigma2 + 0.13)));
+	float A = INV_PI * (1.0 - 0.5 * (sigma2 / (sigma2 + 0.33)) + 0.17 * {rho} * (sigma2 / (sigma2 + 0.13)));
 	float B = INV_PI * (0.45 * (sigma2 / (sigma2 + 0.09)));
 	
 	float diffuse_fujii_oren_nayar = {rho} * cNdotL * max(min((A + B * t), 1.0), 0.0);
