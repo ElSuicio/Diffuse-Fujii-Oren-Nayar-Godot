@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://qhnk2w2tow6x"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://qhnk2w2tow6x"]
 
 [ext_resource type="Shader" uid="uid://del50llud37ap" path="res://addons/diffuse_fujii_oren_nayar/materials/shaders/DiffuseFujiiOrenNayarEnergyConservation.tres" id="1_uf7xl"]
 
@@ -6,5 +6,4 @@
 render_priority = 0
 shader = ExtResource("1_uf7xl")
 shader_parameter/AlbedoColor = Color(1, 1, 1, 1)
-shader_parameter/rho = 0.999999977648
 shader_parameter/Roughness = 0.999999977648

@@ -2,8 +2,8 @@
 extends VisualShaderNodeCustom
 class_name VisualShaderNodeDiffuseFujiiOrenNayarApproximation
 
-# CC0 1.0 Universal, ElSuicio, 2025.
-# GODOT v4.4.1.stable.
+# CC0 1.0 Universal, ElSuicio, 2026.
+# GODOT v4.6.2.stable.
 # x.com/ElSuicio
 # github.com/ElSuicio
 # Contact email [interdreamsoft@gmail.com]
@@ -43,7 +43,7 @@ func _get_input_port_name(port : int) -> String:
 		4:
 			return "Attenuation"
 		5:
-			return "rho"
+			return "Diffuse Color"
 		6:
 			return "sigma"
 	
@@ -62,18 +62,16 @@ func _get_input_port_type(port : int) -> PortType:
 		4:
 			return PORT_TYPE_SCALAR # Attenuation.
 		5:
-			return PORT_TYPE_SCALAR # rho.
+			return PORT_TYPE_VECTOR_3D # Diffuse Color.
 		6:
-			return PORT_TYPE_SCALAR # sigma.
+			return PORT_TYPE_SCALAR # Sigma.
 	
 	return PORT_TYPE_SCALAR
 
 func _get_input_port_default_value(port : int) -> Variant:
 	match port:
-		5:
-			return 0.9 # rho.
 		6:
-			return 30.0 # sigma.
+			return 30.0 # Sigma.
 	
 	return
 
@@ -98,6 +96,7 @@ func _get_code(input_vars : Array[String], output_vars : Array[String], _mode : 
 		"VIEW",
 		"LIGHT_COLOR",
 		"ATTENUATION",
+		"ALBEDO"
 		]
 	
 	for i in range(0, input_vars.size(), 1):
@@ -105,32 +104,36 @@ func _get_code(input_vars : Array[String], output_vars : Array[String], _mode : 
 			input_vars[i] = default_vars[i]
 	
 	var shader : String = """
-	const float INV_PI = 0.318309;
+	const float INV_PI = 0.31830988618379067154;
 	
 	vec3 n = normalize( {normal} );
 	vec3 l = normalize( {light} );
 	vec3 v = normalize( {view} );
 	
-	float cNdotL = max(dot(n, l), 0.0);
-	float cNdotV = max(dot(n, v), 0.0);
+	float NdotL = dot(n, l); // cos(theta_l) == cos(theta_i).
 	
-	// https://mimosa-pudica.net/improved-oren-nayar.html
-	
-	float sigma2 = pow({sigma} * PI / 180.0, 2.0);
-	
-	float t = dot(l, v) - cNdotL * cNdotV;
-	
-	if(t > 0.0)
-	{
-		t /= max(cNdotL, cNdotV);
+	if (NdotL >= 0.0) {
+		float NdotV = min(max(dot(n, v), 1e-3), 1.0); // cos(theta_v) == cos(theta_r).
+		
+		// https://mimosa-pudica.net/improved-oren-nayar.html
+		float sigma2 = pow({sigma} * PI / 180.0, 2.0);
+		
+		float t = dot(l, v) - NdotL * NdotV;
+		
+		if (t > 0.0) {
+			t /= max(NdotL, NdotV);
+		}
+		
+		vec3 A = (1.0 - 0.5 * (sigma2 / (sigma2 + 0.33)) + 0.17 * {diffuse_color} * (sigma2 / (sigma2 + 0.13)));
+		vec3 B = vec3(0.45 * (sigma2 / (sigma2 + 0.09)));
+		
+		vec3 diffuse_fujii_oren_nayar = INV_PI * (A + B * t) * NdotL;
+		
+		{output} = {light_color} * {attenuation} * diffuse_fujii_oren_nayar;
 	}
-	
-	float A = INV_PI * (1.0 - 0.5 * (sigma2 / (sigma2 + 0.33)) + 0.17 * {rho} * (sigma2 / (sigma2 + 0.13)));
-	float B = INV_PI * (0.45 * (sigma2 / (sigma2 + 0.09)));
-	
-	float diffuse_fujii_oren_nayar = {rho} * cNdotL * max(min((A + B * t), 1.0), 0.0);
-	
-	{output} = {light_color} * {attenuation} * diffuse_fujii_oren_nayar;
+	else {
+		{output} = vec3(0.0);
+	}
 	"""
 	
 	return shader.format({
@@ -139,7 +142,7 @@ func _get_code(input_vars : Array[String], output_vars : Array[String], _mode : 
 		"view" : input_vars[2],
 		"light_color" : input_vars[3],
 		"attenuation" : input_vars[4],
-		"rho" : input_vars[5],
+		"diffuse_color" : input_vars[5],
 		"sigma" : input_vars[6],
 		"output" : output_vars[0]
 		})

@@ -2,8 +2,8 @@
 extends VisualShaderNodeCustom
 class_name VisualShaderNodeDiffuseFujiiOrenNayarEnergyConservation
 
-# CC0 1.0 Universal, ElSuicio, 2025.
-# GODOT v4.4.1.stable.
+# CC0 1.0 Universal, ElSuicio, 2026.
+# GODOT v4.6.2.stable.
 # x.com/ElSuicio
 # github.com/ElSuicio
 # Contact email [interdreamsoft@gmail.com]
@@ -28,7 +28,7 @@ func _is_available(mode : Shader.Mode, type : VisualShader.Type) -> bool:
 
 #region Input
 func _get_input_port_count() -> int:
-	return 7
+	return 6
 
 func _get_input_port_name(port : int) -> String:
 	match port:
@@ -43,8 +43,6 @@ func _get_input_port_name(port : int) -> String:
 		4:
 			return "Attenuation"
 		5:
-			return "rho"
-		6:
 			return "Roughness"
 	
 	return ""
@@ -62,8 +60,6 @@ func _get_input_port_type(port : int) -> PortType:
 		4:
 			return PORT_TYPE_SCALAR # Attenuation.
 		5:
-			return PORT_TYPE_SCALAR # rho.
-		6:
 			return PORT_TYPE_SCALAR # Roughness.
 	
 	return PORT_TYPE_SCALAR
@@ -71,8 +67,6 @@ func _get_input_port_type(port : int) -> PortType:
 func _get_input_port_default_value(port : int) -> Variant:
 	match port:
 		5:
-			return 1.0 # rho.
-		6:
 			return 1.0 # Roughness.
 	
 	return
@@ -109,24 +103,29 @@ func _get_code(input_vars : Array[String], output_vars : Array[String], _mode : 
 	vec3 l = normalize( {light} );
 	vec3 v = normalize( {view} );
 	
-	float cNdotL = max(dot(n, l), 0.0);
-	float cNdotV = max(dot(n, v), 0.0);
+	float NdotL = dot(n, l); // cos(theta_l) == cos(theta_i).
 	
-	// https://mimosa-pudica.net/improved-oren-nayar.html
-	
-	float t = dot(l, v) - cNdotL * cNdotV;
-	
-	if(t > 0.0)
-	{
-		t /= max(cNdotL, cNdotV);
+	if (NdotL >= 0.0) {
+		float NdotV = min(max(dot(n, v), 1e-3), 1.0); // cos(theta_v) == cos(theta_r).
+		
+		// https://mimosa-pudica.net/improved-oren-nayar.html
+		float t = dot(l, v) - NdotL * NdotV;
+		
+		if(t > 0.0)
+		{
+			t /= max(NdotL, NdotV);
+		}
+		
+		float A = 1.0 / (PI + {roughness} * 0.90412966012822992834); // 1.0 / (π + ( (π / 2.0) - (2.0 / 3.0) ) * roughness).
+		float B = {roughness} * A;
+		
+		float diffuse_fujii_oren_nayar = (A + (B / PI) * t) * NdotL;
+		
+		{output} = {light_color} * {attenuation} * diffuse_fujii_oren_nayar;
 	}
-	
-	float A = 1.0 / (PI + {roughness} * ((PI / 2.0) - (2.0 / 3.0)));
-	float B = {roughness} * A;
-	
-	float diffuse_fujii_oren_nayar = {rho} * max(min(A + (B / PI) * t, 1.0), 0.0) * cNdotL;
-	
-	{output} = {light_color} * {attenuation} * diffuse_fujii_oren_nayar;
+	else {
+		{output} = vec3(0.0);
+	}
 	"""
 	
 	return shader.format({
@@ -135,7 +134,6 @@ func _get_code(input_vars : Array[String], output_vars : Array[String], _mode : 
 		"view" : input_vars[2],
 		"light_color" : input_vars[3],
 		"attenuation" : input_vars[4],
-		"rho" : input_vars[5],
-		"roughness" : input_vars[6],
+		"roughness" : input_vars[5],
 		"output" : output_vars[0]
 		})
